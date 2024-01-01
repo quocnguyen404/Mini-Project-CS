@@ -7,7 +7,7 @@ Using Dear ImGUI framework create program Employee Manager of BKCorporation.
     Mini-Project-CS\main\MiniProject.sln
 
 - Source code in
-    C:\projects\Cpp\Mini-Project-CS\main\sourcecode
+   Mini-Project-CS\main\sourcecode
 
 
 Dear ImGUI: https://github.com/ocornut/imgui.git
