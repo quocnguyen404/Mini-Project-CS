@@ -5103,7 +5103,7 @@ static void ShowDemoWindowTables()
             struct MyTreeNode
             {
                 const char*     Name;
-                const char*     Type;
+                const char*     Category;
                 int             Size;
                 int             ChildIdx;
                 int             ChildCount;
@@ -5118,7 +5118,7 @@ static void ShowDemoWindowTables()
                         ImGui::TableNextColumn();
                         ImGui::TextDisabled("--");
                         ImGui::TableNextColumn();
-                        ImGui::TextUnformatted(node->Type);
+                        ImGui::TextUnformatted(node->Category);
                         if (open)
                         {
                             for (int child_n = 0; child_n < node->ChildCount; child_n++)
@@ -5132,7 +5132,7 @@ static void ShowDemoWindowTables()
                         ImGui::TableNextColumn();
                         ImGui::Text("%d", node->Size);
                         ImGui::TableNextColumn();
-                        ImGui::TextUnformatted(node->Type);
+                        ImGui::TextUnformatted(node->Category);
                     }
                 }
             };

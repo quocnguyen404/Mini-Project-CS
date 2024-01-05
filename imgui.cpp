@@ -1338,7 +1338,7 @@ void ImGuiIO::AddInputCharacter(unsigned int c)
         return;
 
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_Text;
+    e.Category = ImGuiInputEventType_Text;
     e.Source = ImGuiInputSource_Keyboard;
     e.EventId = g.InputEventsNextEventId++;
     e.Text.Char = c;
@@ -1440,7 +1440,7 @@ static ImGuiInputEvent* FindLatestInputEvent(ImGuiContext* ctx, ImGuiInputEventT
     for (int n = g.InputEventsQueue.Size - 1; n >= 0; n--)
     {
         ImGuiInputEvent* e = &g.InputEventsQueue[n];
-        if (e->Type != type)
+        if (e->Category != type)
             continue;
         if (type == ImGuiInputEventType_Key && e->Key.Key != arg)
             continue;
@@ -1489,7 +1489,7 @@ void ImGuiIO::AddKeyAnalogEvent(ImGuiKey key, bool down, float analog_value)
 
     // Add event
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_Key;
+    e.Category = ImGuiInputEventType_Key;
     e.Source = ImGui::IsGamepadKey(key) ? ImGuiInputSource_Gamepad : ImGuiInputSource_Keyboard;
     e.EventId = g.InputEventsNextEventId++;
     e.Key.Key = key;
@@ -1554,7 +1554,7 @@ void ImGuiIO::AddMousePosEvent(float x, float y)
         return;
 
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_MousePos;
+    e.Category = ImGuiInputEventType_MousePos;
     e.Source = ImGuiInputSource_Mouse;
     e.EventId = g.InputEventsNextEventId++;
     e.MousePos.PosX = pos.x;
@@ -1578,7 +1578,7 @@ void ImGuiIO::AddMouseButtonEvent(int mouse_button, bool down)
         return;
 
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_MouseButton;
+    e.Category = ImGuiInputEventType_MouseButton;
     e.Source = ImGuiInputSource_Mouse;
     e.EventId = g.InputEventsNextEventId++;
     e.MouseButton.Button = mouse_button;
@@ -1598,7 +1598,7 @@ void ImGuiIO::AddMouseWheelEvent(float wheel_x, float wheel_y)
         return;
 
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_MouseWheel;
+    e.Category = ImGuiInputEventType_MouseWheel;
     e.Source = ImGuiInputSource_Mouse;
     e.EventId = g.InputEventsNextEventId++;
     e.MouseWheel.WheelX = wheel_x;
@@ -1628,7 +1628,7 @@ void ImGuiIO::AddFocusEvent(bool focused)
         return;
 
     ImGuiInputEvent e;
-    e.Type = ImGuiInputEventType_Focus;
+    e.Category = ImGuiInputEventType_Focus;
     e.EventId = g.InputEventsNextEventId++;
     e.AppFocused.Focused = focused;
     g.InputEventsQueue.push_back(e);
@@ -3129,7 +3129,7 @@ void ImGui::PushStyleVar(ImGuiStyleVar idx, float val)
 {
     ImGuiContext& g = *GImGui;
     const ImGuiDataVarInfo* var_info = GetStyleVarInfo(idx);
-    if (var_info->Type == ImGuiDataType_Float && var_info->Count == 1)
+    if (var_info->Category == ImGuiDataType_Float && var_info->Count == 1)
     {
         float* pvar = (float*)var_info->GetVarPtr(&g.Style);
         g.StyleVarStack.push_back(ImGuiStyleMod(idx, *pvar));
@@ -3143,7 +3143,7 @@ void ImGui::PushStyleVar(ImGuiStyleVar idx, const ImVec2& val)
 {
     ImGuiContext& g = *GImGui;
     const ImGuiDataVarInfo* var_info = GetStyleVarInfo(idx);
-    if (var_info->Type == ImGuiDataType_Float && var_info->Count == 2)
+    if (var_info->Category == ImGuiDataType_Float && var_info->Count == 2)
     {
         ImVec2* pvar = (ImVec2*)var_info->GetVarPtr(&g.Style);
         g.StyleVarStack.push_back(ImGuiStyleMod(idx, *pvar));
@@ -3167,8 +3167,8 @@ void ImGui::PopStyleVar(int count)
         ImGuiStyleMod& backup = g.StyleVarStack.back();
         const ImGuiDataVarInfo* info = GetStyleVarInfo(backup.VarIdx);
         void* data = info->GetVarPtr(&g.Style);
-        if (info->Type == ImGuiDataType_Float && info->Count == 1)      { ((float*)data)[0] = backup.BackupFloat[0]; }
-        else if (info->Type == ImGuiDataType_Float && info->Count == 2) { ((float*)data)[0] = backup.BackupFloat[0]; ((float*)data)[1] = backup.BackupFloat[1]; }
+        if (info->Category == ImGuiDataType_Float && info->Count == 1)      { ((float*)data)[0] = backup.BackupFloat[0]; }
+        else if (info->Category == ImGuiDataType_Float && info->Count == 2) { ((float*)data)[0] = backup.BackupFloat[0]; ((float*)data)[1] = backup.BackupFloat[1]; }
         g.StyleVarStack.pop_back();
         count--;
     }
@@ -3477,16 +3477,16 @@ void ImGui::RenderMouseCursor(ImVec2 base_pos, float base_scale, ImGuiMouseCurso
         if (!font_atlas->GetMouseCursorTexData(mouse_cursor, &offset, &size, &uv[0], &uv[2]))
             continue;
         const ImVec2 pos = base_pos - offset;
-        const float scale = base_scale;
-        if (!viewport->GetMainRect().Overlaps(ImRect(pos, pos + ImVec2(size.x + 2, size.y + 2) * scale)))
+        const float Scale = base_scale;
+        if (!viewport->GetMainRect().Overlaps(ImRect(pos, pos + ImVec2(size.x + 2, size.y + 2) * Scale)))
             continue;
         ImDrawList* draw_list = GetForegroundDrawList(viewport);
         ImTextureID tex_id = font_atlas->TexID;
         draw_list->PushTextureID(tex_id);
-        draw_list->AddImage(tex_id, pos + ImVec2(1, 0) * scale, pos + (ImVec2(1, 0) + size) * scale, uv[2], uv[3], col_shadow);
-        draw_list->AddImage(tex_id, pos + ImVec2(2, 0) * scale, pos + (ImVec2(2, 0) + size) * scale, uv[2], uv[3], col_shadow);
-        draw_list->AddImage(tex_id, pos,                        pos + size * scale,                  uv[2], uv[3], col_border);
-        draw_list->AddImage(tex_id, pos,                        pos + size * scale,                  uv[0], uv[1], col_fill);
+        draw_list->AddImage(tex_id, pos + ImVec2(1, 0) * Scale, pos + (ImVec2(1, 0) + size) * Scale, uv[2], uv[3], col_shadow);
+        draw_list->AddImage(tex_id, pos + ImVec2(2, 0) * Scale, pos + (ImVec2(2, 0) + size) * Scale, uv[2], uv[3], col_shadow);
+        draw_list->AddImage(tex_id, pos,                        pos + size * Scale,                  uv[2], uv[3], col_border);
+        draw_list->AddImage(tex_id, pos,                        pos + size * Scale,                  uv[0], uv[1], col_fill);
         draw_list->PopTextureID();
     }
 }
@@ -3683,7 +3683,7 @@ void ImGui::Shutdown()
 ImGuiID ImGui::AddContextHook(ImGuiContext* ctx, const ImGuiContextHook* hook)
 {
     ImGuiContext& g = *ctx;
-    IM_ASSERT(hook->Callback != NULL && hook->HookId == 0 && hook->Type != ImGuiContextHookType_PendingRemoval_);
+    IM_ASSERT(hook->Callback != NULL && hook->HookId == 0 && hook->Category != ImGuiContextHookType_PendingRemoval_);
     g.Hooks.push_back(*hook);
     g.Hooks.back().HookId = ++g.HookIdNext;
     return g.HookIdNext;
@@ -3696,7 +3696,7 @@ void ImGui::RemoveContextHook(ImGuiContext* ctx, ImGuiID hook_id)
     IM_ASSERT(hook_id != 0);
     for (ImGuiContextHook& hook : g.Hooks)
         if (hook.HookId == hook_id)
-            hook.Type = ImGuiContextHookType_PendingRemoval_;
+            hook.Category = ImGuiContextHookType_PendingRemoval_;
 }
 
 // Call context hooks (used by e.g. test engine)
@@ -3705,7 +3705,7 @@ void ImGui::CallContextHooks(ImGuiContext* ctx, ImGuiContextHookType hook_type)
 {
     ImGuiContext& g = *ctx;
     for (ImGuiContextHook& hook : g.Hooks)
-        if (hook.Type == hook_type)
+        if (hook.Category == hook_type)
             hook.Callback(&g, &hook);
 }
 
@@ -4542,7 +4542,7 @@ void ImGui::NewFrame()
     // Remove pending delete hooks before frame start.
     // This deferred removal avoid issues of removal while iterating the hook vector
     for (int n = g.Hooks.Size - 1; n >= 0; n--)
-        if (g.Hooks[n].Type == ImGuiContextHookType_PendingRemoval_)
+        if (g.Hooks[n].Category == ImGuiContextHookType_PendingRemoval_)
             g.Hooks.erase(&g.Hooks[n]);
 
     CallContextHooks(&g, ImGuiContextHookType_NewFramePre);
@@ -7768,12 +7768,12 @@ ImVec2 ImGui::GetFontTexUvWhitePixel()
     return GImGui->DrawListSharedData.TexUvWhitePixel;
 }
 
-void ImGui::SetWindowFontScale(float scale)
+void ImGui::SetWindowFontScale(float Scale)
 {
-    IM_ASSERT(scale > 0.0f);
+    IM_ASSERT(Scale > 0.0f);
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
-    window->FontWindowScale = scale;
+    window->FontWindowScale = Scale;
     g.FontSize = g.DrawListSharedData.FontSize = window->CalcFontSize();
 }
 
@@ -8936,14 +8936,14 @@ void ImGui::UpdateMouseWheel()
         LockWheelingWindow(mouse_window, wheel.y);
         ImGuiWindow* window = mouse_window;
         const float new_font_scale = ImClamp(window->FontWindowScale + g.IO.MouseWheel * 0.10f, 0.50f, 2.50f);
-        const float scale = new_font_scale / window->FontWindowScale;
+        const float Scale = new_font_scale / window->FontWindowScale;
         window->FontWindowScale = new_font_scale;
         if (window == window->RootWindow)
         {
-            const ImVec2 offset = window->Size * (1.0f - scale) * (g.IO.MousePos - window->Pos) / window->Size;
+            const ImVec2 offset = window->Size * (1.0f - Scale) * (g.IO.MousePos - window->Pos) / window->Size;
             SetWindowPos(window, window->Pos + offset, 0);
-            window->Size = ImTrunc(window->Size * scale);
-            window->SizeFull = ImTrunc(window->SizeFull * scale);
+            window->Size = ImTrunc(window->Size * Scale);
+            window->SizeFull = ImTrunc(window->SizeFull * Scale);
         }
         return;
     }
@@ -9022,12 +9022,12 @@ static const char* GetMouseSourceName(ImGuiMouseSource source)
 static void DebugPrintInputEvent(const char* prefix, const ImGuiInputEvent* e)
 {
     ImGuiContext& g = *GImGui;
-    if (e->Type == ImGuiInputEventType_MousePos)    { if (e->MousePos.PosX == -FLT_MAX && e->MousePos.PosY == -FLT_MAX) IMGUI_DEBUG_LOG_IO("[io] %s: MousePos (-FLT_MAX, -FLT_MAX)\n", prefix); else IMGUI_DEBUG_LOG_IO("[io] %s: MousePos (%.1f, %.1f) (%s)\n", prefix, e->MousePos.PosX, e->MousePos.PosY, GetMouseSourceName(e->MousePos.MouseSource)); return; }
-    if (e->Type == ImGuiInputEventType_MouseButton) { IMGUI_DEBUG_LOG_IO("[io] %s: MouseButton %d %s (%s)\n", prefix, e->MouseButton.Button, e->MouseButton.Down ? "Down" : "Up", GetMouseSourceName(e->MouseButton.MouseSource)); return; }
-    if (e->Type == ImGuiInputEventType_MouseWheel)  { IMGUI_DEBUG_LOG_IO("[io] %s: MouseWheel (%.3f, %.3f) (%s)\n", prefix, e->MouseWheel.WheelX, e->MouseWheel.WheelY, GetMouseSourceName(e->MouseWheel.MouseSource)); return; }
-    if (e->Type == ImGuiInputEventType_Key)         { IMGUI_DEBUG_LOG_IO("[io] %s: Key \"%s\" %s\n", prefix, ImGui::GetKeyName(e->Key.Key), e->Key.Down ? "Down" : "Up"); return; }
-    if (e->Type == ImGuiInputEventType_Text)        { IMGUI_DEBUG_LOG_IO("[io] %s: Text: %c (U+%08X)\n", prefix, e->Text.Char, e->Text.Char); return; }
-    if (e->Type == ImGuiInputEventType_Focus)       { IMGUI_DEBUG_LOG_IO("[io] %s: AppFocused %d\n", prefix, e->AppFocused.Focused); return; }
+    if (e->Category == ImGuiInputEventType_MousePos)    { if (e->MousePos.PosX == -FLT_MAX && e->MousePos.PosY == -FLT_MAX) IMGUI_DEBUG_LOG_IO("[io] %s: MousePos (-FLT_MAX, -FLT_MAX)\n", prefix); else IMGUI_DEBUG_LOG_IO("[io] %s: MousePos (%.1f, %.1f) (%s)\n", prefix, e->MousePos.PosX, e->MousePos.PosY, GetMouseSourceName(e->MousePos.MouseSource)); return; }
+    if (e->Category == ImGuiInputEventType_MouseButton) { IMGUI_DEBUG_LOG_IO("[io] %s: MouseButton %d %s (%s)\n", prefix, e->MouseButton.Button, e->MouseButton.Down ? "Down" : "Up", GetMouseSourceName(e->MouseButton.MouseSource)); return; }
+    if (e->Category == ImGuiInputEventType_MouseWheel)  { IMGUI_DEBUG_LOG_IO("[io] %s: MouseWheel (%.3f, %.3f) (%s)\n", prefix, e->MouseWheel.WheelX, e->MouseWheel.WheelY, GetMouseSourceName(e->MouseWheel.MouseSource)); return; }
+    if (e->Category == ImGuiInputEventType_Key)         { IMGUI_DEBUG_LOG_IO("[io] %s: Key \"%s\" %s\n", prefix, ImGui::GetKeyName(e->Key.Key), e->Key.Down ? "Down" : "Up"); return; }
+    if (e->Category == ImGuiInputEventType_Text)        { IMGUI_DEBUG_LOG_IO("[io] %s: Text: %c (U+%08X)\n", prefix, e->Text.Char, e->Text.Char); return; }
+    if (e->Category == ImGuiInputEventType_Focus)       { IMGUI_DEBUG_LOG_IO("[io] %s: AppFocused %d\n", prefix, e->AppFocused.Focused); return; }
 }
 #endif
 
@@ -9053,7 +9053,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
     for (; event_n < g.InputEventsQueue.Size; event_n++)
     {
         ImGuiInputEvent* e = &g.InputEventsQueue[event_n];
-        if (e->Type == ImGuiInputEventType_MousePos)
+        if (e->Category == ImGuiInputEventType_MousePos)
         {
             if (g.IO.WantSetMousePos)
                 continue;
@@ -9065,7 +9065,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
             io.MouseSource = e->MousePos.MouseSource;
             mouse_moved = true;
         }
-        else if (e->Type == ImGuiInputEventType_MouseButton)
+        else if (e->Category == ImGuiInputEventType_MouseButton)
         {
             // Trickling Rule: Stop processing queued events if we got multiple action on the same button
             const ImGuiMouseButton button = e->MouseButton.Button;
@@ -9078,7 +9078,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
             io.MouseSource = e->MouseButton.MouseSource;
             mouse_button_changed |= (1 << button);
         }
-        else if (e->Type == ImGuiInputEventType_MouseWheel)
+        else if (e->Category == ImGuiInputEventType_MouseWheel)
         {
             // Trickling Rule: Stop processing queued events if we got multiple action on the event
             if (trickle_fast_inputs && (mouse_moved || mouse_button_changed != 0))
@@ -9088,7 +9088,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
             io.MouseSource = e->MouseWheel.MouseSource;
             mouse_wheeled = true;
         }
-        else if (e->Type == ImGuiInputEventType_Key)
+        else if (e->Category == ImGuiInputEventType_Key)
         {
             // Trickling Rule: Stop processing queued events if we got multiple action on the same button
             ImGuiKey key = e->Key.Key;
@@ -9109,7 +9109,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
                 io.KeysDown[io.KeyMap[key_data_index]] = key_data->Down;
 #endif
         }
-        else if (e->Type == ImGuiInputEventType_Text)
+        else if (e->Category == ImGuiInputEventType_Text)
         {
             // Trickling Rule: Stop processing queued events if keys/mouse have been interacted with
             if (trickle_fast_inputs && ((key_changed && trickle_interleaved_keys_and_text) || mouse_button_changed != 0 || mouse_moved || mouse_wheeled))
@@ -9119,7 +9119,7 @@ void ImGui::UpdateInputEvents(bool trickle_fast_inputs)
             if (trickle_interleaved_keys_and_text)
                 text_inputted = true;
         }
-        else if (e->Type == ImGuiInputEventType_Focus)
+        else if (e->Category == ImGuiInputEventType_Focus)
         {
             // We intentionally overwrite this and process in NewFrame(), in order to give a chance
             // to multi-viewports backends to queue AddFocusEvent(false) + AddFocusEvent(true) in same frame.
@@ -10956,14 +10956,14 @@ ImVec2 ImGui::FindBestWindowPosForPopup(ImGuiWindow* window)
         // Note that drag and drop tooltips are NOT using this path: BeginTooltipEx() manually sets their position.
         // In theory we could handle both cases in same location, but requires a bit of shuffling as drag and drop tooltips are calling SetWindowPos() leading to 'window_pos_set_by_api' being set in Begin()
         IM_ASSERT(g.CurrentWindow == window);
-        const float scale = g.Style.MouseCursorScale;
+        const float Scale = g.Style.MouseCursorScale;
         const ImVec2 ref_pos = NavCalcPreferredRefPos();
-        const ImVec2 tooltip_pos = ref_pos + TOOLTIP_DEFAULT_OFFSET * scale;
+        const ImVec2 tooltip_pos = ref_pos + TOOLTIP_DEFAULT_OFFSET * Scale;
         ImRect r_avoid;
         if (!g.NavDisableHighlight && g.NavDisableMouseHover && !(g.IO.ConfigFlags & ImGuiConfigFlags_NavEnableSetMousePos))
             r_avoid = ImRect(ref_pos.x - 16, ref_pos.y - 8, ref_pos.x + 16, ref_pos.y + 8);
         else
-            r_avoid = ImRect(ref_pos.x - 16, ref_pos.y - 8, ref_pos.x + 24 * scale, ref_pos.y + 24 * scale); // FIXME: Hard-coded based on mouse cursor shape expectation. Exact dimension not very important.
+            r_avoid = ImRect(ref_pos.x - 16, ref_pos.y - 8, ref_pos.x + 24 * Scale, ref_pos.y + 24 * Scale); // FIXME: Hard-coded based on mouse cursor shape expectation. Exact dimension not very important.
         //GetForegroundDrawList()->AddRect(r_avoid.Min, r_avoid.Max, IM_COL32(255, 0, 255, 255));
         return FindBestWindowPosForPopupEx(tooltip_pos, window->Size, &window->AutoPosLastDirection, r_outer, r_avoid, ImGuiPopupPositionPolicy_Tooltip);
     }
@@ -13728,8 +13728,8 @@ void ImGui::DebugRenderViewportThumbnail(ImDrawList* draw_list, ImGuiViewportP* 
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    ImVec2 scale = bb.GetSize() / viewport->Size;
-    ImVec2 off = bb.Min - viewport->Pos * scale;
+    ImVec2 Scale = bb.GetSize() / viewport->Size;
+    ImVec2 off = bb.Min - viewport->Pos * Scale;
     float alpha_mul = 1.0f;
     window->DrawList->AddRectFilled(bb.Min, bb.Max, GetColorU32(ImGuiCol_Border, alpha_mul * 0.40f));
     for (ImGuiWindow* thumb_window : g.Windows)
@@ -13739,8 +13739,8 @@ void ImGui::DebugRenderViewportThumbnail(ImDrawList* draw_list, ImGuiViewportP* 
 
         ImRect thumb_r = thumb_window->Rect();
         ImRect title_r = thumb_window->TitleBarRect();
-        thumb_r = ImRect(ImTrunc(off + thumb_r.Min * scale), ImTrunc(off +  thumb_r.Max * scale));
-        title_r = ImRect(ImTrunc(off + title_r.Min * scale), ImTrunc(off +  ImVec2(title_r.Max.x, title_r.Min.y) * scale) + ImVec2(0,5)); // Exaggerate title bar height
+        thumb_r = ImRect(ImTrunc(off + thumb_r.Min * Scale), ImTrunc(off +  thumb_r.Max * Scale));
+        title_r = ImRect(ImTrunc(off + title_r.Min * Scale), ImTrunc(off +  ImVec2(title_r.Max.x, title_r.Min.y) * Scale) + ImVec2(0,5)); // Exaggerate title bar height
         thumb_r.ClipWithFull(bb);
         title_r.ClipWithFull(bb);
         const bool window_is_focused = (g.NavWindow && thumb_window->RootWindowForTitleBarHighlight == g.NavWindow->RootWindowForTitleBarHighlight);

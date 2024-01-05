@@ -22,6 +22,7 @@
     <ProjectGuid>{9CDA7840-B7A5-496D-A527-E95571496D18}</ProjectGuid>
     <RootNamespace>example_glfw_opengl2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>BKEncyclopedia</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -166,9 +167,10 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_opengl2.cpp" />
-    <ClCompile Include="backend.cpp" />
-    <ClCompile Include="helper.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SourceCode\class.cpp" />
+    <ClCompile Include="SourceCode\common.cpp" />
+    <ClCompile Include="SourceCode\main.cpp" />
+    <ClCompile Include="SourceCode\ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h" />
@@ -176,13 +178,22 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\backends\imgui_impl_opengl2.h" />
-    <ClInclude Include="backend.h" />
-    <ClInclude Include="helper.h" />
+    <ClInclude Include="header.h" />
+    <ClInclude Include="Header\ui.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\misc\debuggers\imgui.natstepfilter" />
     <None Include="..\..\misc\debuggers\imgui.natvis" />
     <None Include="..\README.txt" />
+    <None Include="imgui.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="data.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Xsd>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

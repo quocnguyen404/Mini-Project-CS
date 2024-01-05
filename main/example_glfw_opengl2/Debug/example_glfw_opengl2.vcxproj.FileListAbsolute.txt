@@ -1,1 +1,2 @@
 C:\projects\Cpp\MiniProjectCS\imgui\examples\example_glfw_opengl2\Debug\example_glfw_opengl2.exe
+C:\projects\Cpp\Mini-Project-CS\main\example_glfw_opengl2\Debug\BKEncyclopedia.exe
