@@ -1,60 +1,18 @@
 Han Quoc 
 1
-Seoul;won;50760000;99,392 km2;nam 1945, Han Quoc duoc giai phong khoi ach thong tri keo dai 35 nam cua thuc dan Nhat
+Seoul;won;50760000;99,392 km2
 Thai Lan
 1
-Bangkok;Bath;67450000;514 km2;Nam 1997,Thai Lan ban hanh Hien phap moi, Thuong nghi vien duoc bau theo pho thong dau phieu
+Bangkok;Bath;67450000;514 km2
 Singapore
 1
-Singapore;SGD;5560302;697 km2;Nam 2013, GDP binh quan dau nguoi c?a Singapore len toi 61.100 ngang bang voi cac quoc gia hang dau o chau Au.
+Singapore;SGD;5560302;697 km2
 Lao
 1
-Vientiane;Kip;6700000;2368000km2;Tu nam 1520, dat nuoc nay mo mang nhanh chong, bat dau dat thu do tai Vientiane
+Vientiane;Kip;6700000;2368000km2
 Trung Quoc
 1
-Bac Kinh;NDT;1349.59 trieu nguoi;9,596,960 km2;Trung Quoc co mot lich Mat Trang ma toi the ky XXI chung ta van su dung tot
+Bac Kinh;NDT;1349.59 trieu nguoi
 Campuchia
 1
-Phnom Penh;KHR;1687.000;181,040 km2;Ngay 2/12/1978 Mat tran giai phong dan toc Campuchia ra doi do Heng Samrin lam Chu tich
-Nhat Ban
-1
-Tokyo;Yen;12740000;377815 km2;Sau chien tranh, Nhat tap trung phat trien kinh te. Tu nam 1955 toi 1970 kinh te tang truong rat nhanh chong
-Nga
-1
-Matxcova;RUB;142.50 trieu nguoi;17,075,200 km2;Van hoa Nga con duoc the hien qua nhung lang nghe truyen thong nhu nghe theu thua, do choi thu cong my nghe 
-Duc
-1
-Berlin;DEM;82,2 trieu nguoi;357,050 km2;Duc la mot dat nuoc phat trien va co mot nen van hoa truyen thong lau doi bac nhat tai chau Au, tu van hoc cho den am nhac va dac biet la van hoa bia doc dao
-Itali
-1
-Rome;Euro;61.48 trieu nguoi;301,230 km2;Italiala mot nuoc co nen hoi hoa, kien truc tu thoi ky co dai, trung co va phuc hung kha phat trien	
-My
-1
-Washington;USD;274,028 trieu nguoi;9.372.610 km2;My la mot quoc gia da van hoa la noi sinh song cua nhieu nhom da dang chung toc, truyen thong, va gia tri
-Phap
-1
-Pari;Francs;60,7 trieu nguoi;550 000 km2;Theo Hien phap nam 1958, nguoi dung dau Nha nuoc la tru cot cho cac the che
-Phillippines
-1
-Manila;Peso;105.72 trieu nguoi;300,000 km2;Thang Muoi Mot nam 2000, phai doi lap doi dua ong ra xu truoc toa an cua Thuong vien vao dau thang Muoi Hai, nhung luat su cua ong cho rang ong khong phai ra toa, vi khong du chung co.
-Malaysia
-1
-Kuala Lumpur;Ringgit;29.63 trieu nguoi;329,750 km2;Su da dang sac toc c?a Ma-lay-si-a phan anh tinh phuc tap cua lich su, cua suc hap dan ve tai nguyen thien nhien va vi tri kinh doanh ban dau cua Ma-lay-si-a
-Myanmar
-1
-Nay Pyi Taw;Kyat;54.17 trieu nguoi;676.578 km2;Tu 1959, Chinh phu da thuc hien mot chuong trinh bao hiem xa hoi cho chua benh, tai nan�Chua benh duoc mien phi, benh vien co o nhieu noi
-Tong cong ty bia ruou ha noi
-2
-Tran Dinh Thanh;120 trieu usd;Tong cong ty bia ruou ha noi duoc thanh lap ngay 16 thang 5 nam 2003 theo Quyet dinh so 75/2003/Q� � BCN cua Bo truong  Bo Cong nghiep
-Vat Lieu Xay Dung Ha Noi
-2
-Bach Anh Dao;399 ti usd;Cong ty Vat lieu xay dung Ha Noi thanh lap nam 1995 dang phat trien kha lon
-Cong ty co phan Kinh Do
-2
-Tran Le Nguyen;1,4 ti dong;Ngay 01/10/2002, Cong ty Kinh Do chinh thuc chuyen the tu Cong ty TNHH Xay dung va Che Bien Thuc Pham Kinh Do sang hinh thuc Cong ty Co Phan Kinh Do
-Nhiet dien Pha Lai
-2
-Pham Van Thu;59 ti USD;Nha may nhiet dien Pha Lai duoc thanh lap theo Q� so 22 �L/TCCB cua Bo Dien luc vao ngay 26/04/1982 la doanh nghiep hach toan phu thuoc cong ty dien luc 1.
-Cong hoa Nam Phi
-1
-Pretoria;ZAR;48.60 trieu nguoi;1,219,912 km2;Theo the che Cong hoa tong thong che do luong vien (tu nam 1961) Hien phap hien hanh duoc ban hanh ngay 3 thang 2 nam 1997
+Phnom Penh;KHR;1687.000;181,040 km2

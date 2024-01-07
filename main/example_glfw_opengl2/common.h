@@ -68,16 +68,20 @@ public:
     std::map <int, std::shared_ptr<Category>>* getCategorys();
 };
 
-
+//Singleton
+//Do not pass nullptr to this class constructor
 //Messenger class
 class Messenger
 {
+private:
+    std::vector<std::string> messenger;
+
 public:
-    std::string messenger;
     Messenger(std::string& messenger);
-    Messenger(Word& word);
-    Messenger(Category& category);
+    Messenger(std::shared_ptr<Word>& word);
+    Messenger(std::shared_ptr<Category>& category);
     void addMessenger(std::string additionMessenger);
+    std::vector<std::string>& getMessenger();
 
 };
 
@@ -87,10 +91,12 @@ class MessengerHandler
 {
 private:
     static MessengerHandler instance;
-    std::vector<Messenger> messengers;
+    std::vector<std::shared_ptr<Messenger>> messengers;
 
 public:
-    void addMessenger(Messenger& messenger);
+    static MessengerHandler& get();
+    bool hasMessenger();
+    void addMessenger(std::shared_ptr<Messenger> messenger);
     void printMessenger();
 };
 

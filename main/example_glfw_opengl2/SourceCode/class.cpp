@@ -113,22 +113,70 @@ std::map <int, std::shared_ptr<Category>>* WordManager::getCategorys()
 // Messenger class //
 /////////////////////
 
-Messenger::Messenger(std::string& messenger) : messenger() { this->messenger = messenger; }
-
-Messenger::Messenger(Word& word)
-    : messenger()
+Messenger::Messenger(std::string& messenger)
 {
-    this->addMessenger(word.getWord());
-    this->addMessenger(std::to_string(word.getCateID()));
+    this->addMessenger("Messenger: ");
+    this->addMessenger(messenger);
+}
 
-    for (auto& w : *word.getRelateWord())
+Messenger::Messenger(std::shared_ptr<Word>& word)
+{
+    this->addMessenger("Word: ");
+    this->addMessenger(word->getWord());
+    this->addMessenger(std::to_string(word->getCateID()));
+
+    for (auto& w : *word->getRelateWord())
         this->addMessenger(w);
 }
 
-void Messenger::addMessenger(std::string additionMessenger) { this->messenger += additionMessenger + '\n'; }
+Messenger::Messenger(std::shared_ptr<Category>& category)
+{
+    this->addMessenger("Category: ");
+    this->addMessenger(category->getCateName());
+    this->addMessenger(std::to_string(category->getCatID()));
+}
+
+void Messenger::addMessenger(std::string additionMessenger)
+{
+    this->messenger.push_back(additionMessenger);
+}
+
+std::vector<std::string>& Messenger::getMessenger()
+{
+    return this->messenger;
+}
 
 /////////////////////////////
 // Messenger Handler class //
 /////////////////////////////
 
+MessengerHandler MessengerHandler::instance;
 
+MessengerHandler& MessengerHandler::get() { return instance; }
+
+
+bool MessengerHandler::hasMessenger() { return messengers.size() > 0 ? true : false; }
+
+void MessengerHandler::addMessenger(std::shared_ptr<Messenger> messenger)
+{
+    if (messenger == nullptr)
+        return;
+
+    messengers.emplace_back(messenger);
+}
+
+void MessengerHandler::printMessenger()
+{
+    ImGui::Begin("Messenger");
+
+    for (auto& m : this->messengers)
+        for (auto& s : m->getMessenger())
+            ImGui::Text(s.c_str());
+
+    ImGui::End();
+
+    for (auto& m : this->messengers)
+        m.reset();
+
+    messengers.clear();
+}

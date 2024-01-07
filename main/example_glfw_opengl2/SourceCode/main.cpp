@@ -18,7 +18,7 @@
 
 static void glfw_error_callback(int error, const char* description);
 void showMainWindow(bool* pOpen);
-std::shared_ptr<Word> showFindWordWindow(bool* pOpen, std::string& items);
+std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items);
 void showAddWordWindow(bool* pOpen);
 void showAddCategoryWindow(bool* pOpen);
 void showPrintWordCategoryWindow(bool* pOpen);
@@ -80,8 +80,16 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        float oldSize = ImGui::GetFont()->Scale;
+        ImGui::GetFont()->Scale = 1.5f;
+        ImGui::PushFont(ImGui::GetFont());
+        ImGui::GetFont()->Scale = oldSize;
         //Our code
         if (show_main_window) showMainWindow(&show_main_window);
+
+        ImGui::PopFont();
+        //font
+
 
         // Rendering
         ImGui::Render();
@@ -130,12 +138,11 @@ void showMainWindow(bool* pOpen)
     std::vector<std::string> items;
 
     //font
-    float oldSize = ImGui::GetFont()->Scale;
-    ImGui::GetFont()->Scale = 1.5f;
-    ImGui::PushFont(ImGui::GetFont());
-    ImGui::GetFont()->Scale = oldSize;
 
-    if (find_word_window) showFindWordWindow(&find_word_window, items_str);
+
+    if (find_word_window)
+        MessengerHandler::get().addMessenger(showFindWordWindow(&find_word_window, items_str));
+
     if (add_word_window) showAddWordWindow(&add_word_window);
     if (add_category_window) showAddCategoryWindow(&add_category_window);
     if (print_word_category_window) showPrintWordCategoryWindow(&print_word_category_window);
@@ -144,46 +151,44 @@ void showMainWindow(bool* pOpen)
     if (output_window) showOutputWindow(&output_window);
 
     ImGuiWindowFlags window_flag = 0;
-    window_flag = ImGuiWindowFlags_NoFocusOnAppearing;
+    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f));
+
+    ImGui::Begin(programTitle, NULL, window_flag);
+
+
+    ImGui::Text("Hello");
+
+    if (UI::buttonAlign("Find word", 0.1f))
     {
-        const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f));
+        if (items.size() == WordManager::get().getCategorys()->size())
+            return;
 
-        ImGui::Begin(programTitle, NULL, ImGuiWindowFlags_None);
+        items_str = "";
+        for (auto& c : *WordManager::get().getCategorys())
+            items_str += c.second->getCateName() + '\0';
 
-
-        ImGui::Text("Hello");
-
-        if (UI::buttonAlign("Find word", 0.1f))
-        {
-            if (items.size() == WordManager::get().getCategorys()->size())
-                return;
-
-            items_str = "";
-            for (auto& c : *WordManager::get().getCategorys())
-                items_str += c.second->getCateName() + '\0';
-
-            find_word_window = true;
-        }
-
-        ImGui::End();
+        find_word_window = true;
     }
 
-    ImGui::PopFont();
-    //font
+    ImGui::End();
+
+    if (MessengerHandler::get().hasMessenger())
+        MessengerHandler::get().printMessenger();
+
 }
 
-std::shared_ptr<Word> showFindWordWindow(bool* pOpen, std::string& items)
+std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items)
 {
     ImGuiIO& io = ImGui::GetIO();
-
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_None, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowSize(ImVec2(450.f, 200.f));
 
-    ImGui::Begin("Find word", pOpen);
-
     static int cateID = -1;
+    std::shared_ptr<Messenger> mess = nullptr;
 
+    //window 
+    ImGui::Begin("Find word", pOpen);
     ImGui::Combo("Category", &cateID, items.c_str());
 
     char buf[100] = "Enter word";
@@ -195,17 +200,33 @@ std::shared_ptr<Word> showFindWordWindow(bool* pOpen, std::string& items)
         if (!WordManager::get().existCategory(cateID))
             return nullptr;
 
-        return WordManager::get().getWord(cateID, buf);
+        std::shared_ptr<Word> pWord = WordManager::get().getWord(cateID, buf);
+
+        if (pWord == nullptr)
+            return nullptr;
+
+        mess = std::make_shared<Messenger>(Messenger(pWord));
+
+        ImGui::End();
+
+        return mess;
     }
 
     if (UI::buttonAlign("Find", 0.5f))
     {
-        return WordManager::get().getWord(cateID, buf);
+        if (!WordManager::get().existCategory(cateID))
+            return nullptr;
+
+        mess = std::make_shared<Messenger>(Messenger(WordManager::get().getWord(cateID, buf)));
+
+        ImGui::End();
+
+        return mess;
     }
 
     ImGui::End();
 
-    return nullptr;
+    return mess;
 }
 
 void showAddWordWindow(bool* pOpen)
