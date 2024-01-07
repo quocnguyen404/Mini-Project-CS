@@ -1,6 +1,6 @@
-﻿Han Quoc 
+Han Quoc 
 1
-Seoul;won;50760000;99,392 km2;nam 1945, Han Quoc duoc giai phong khoi ach thong tri keo dai 35 nam cua thuc dan Nhat.
+Seoul;won;50760000;99,392 km2;nam 1945, Han Quoc duoc giai phong khoi ach thong tri keo dai 35 nam cua thuc dan Nhat
 Thai Lan
 1
 Bangkok;Bath;67450000;514 km2;Nam 1997,Thai Lan ban hanh Hien phap moi, Thuong nghi vien duoc bau theo pho thong dau phieu

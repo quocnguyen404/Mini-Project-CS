@@ -1,4 +1,4 @@
-#include "main/example_glfw_opengl2/header.h"
+#include "main/example_glfw_opengl2/common.h"
 
 void loadCategory()
 {
@@ -14,6 +14,7 @@ void loadCategory()
 
     int cateID;
     std::string cateName;
+
 
     while (file >> cateID)
     {
@@ -39,20 +40,20 @@ void loadData()
         return;
     }
 
-    int cateID;
-    std::string word, rawRelate;
+    std::string cateID;
+    std::string word;
+    std::string rawRelate;
 
     while (std::getline(file, word))
     {
-        file >> cateID;
-        std::ignore;
-        //std::getline(file, rawRelate);
+        std::getline(file, cateID);
+        std::getline(file, rawRelate);
 
-        WordManager::get().addWord(createWord(cateID, word, "rawRelate"));
+        WordManager::get().addWord(createWord(stoi(cateID), word, rawRelate));
     }
 
     file.close();
-    std::cout << "load data done.\n";
+    std::cout << "load words done.\n";
 
 }
 
@@ -60,6 +61,8 @@ std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRe
 {
     std::shared_ptr<Word> nWord(nullptr);
     nWord = std::make_shared<Word>(cateID, word);
+
+    std::cout << "create word " << cateID << ", " << word << "\n";
 
     return nWord;
 }
@@ -74,6 +77,9 @@ void createCategory(int cateID, std::string cateName)
 
     std::shared_ptr<Category> nCate = std::make_shared<Category>(cateID, cateName);
     WordManager::get().addCategory(nCate);
+
+    std::cout << "create category " << cateID << ", " << cateName << "\n";
+
 }
 
 

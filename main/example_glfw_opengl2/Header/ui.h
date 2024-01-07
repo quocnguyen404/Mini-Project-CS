@@ -16,6 +16,4 @@ namespace UI
 {
     void textAlign(const char* text, float alignment);
     bool buttonAlign(const char* label, float alignment);
-    void showMainWindow(bool& p_open);
-    void showMessageWindow(bool& p_open, std::vector<std::string> mess);
 }
