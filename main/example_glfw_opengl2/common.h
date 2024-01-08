@@ -63,6 +63,7 @@ public:
     std::shared_ptr<Word> getWord(int cateID, std::string word);
     std::string& getCateName(int cateID);
     bool existCategory(int cateID);
+    bool existCategory(std::string cateName);
     void addCategory(std::shared_ptr<Category>& ntype);
     void addWord(std::shared_ptr<Word>& nWord);
     void removeCategory(int categoryID);
@@ -97,13 +98,16 @@ private:
 public:
     static MessengerHandler& get();
     bool hasMessenger();
-    void addMessenger(std::shared_ptr<Messenger> messenger);
+    void addMessenger(std::shared_ptr<Messenger>& messenger);
     void openMessengerWindow();
     void closeMessengerWindow();
 };
 
 void loadCategory();
 void loadData();
+void saveWord(std::shared_ptr<Word> pWord);
+void saveCategory(std::shared_ptr<Category>& pCate);
 std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRelate);
-void createCategory(int cateID, std::string cateName);
+std::shared_ptr<Category> createCategory(int cateID, std::string cateName);
 std::string removeExtraWhiteSpace(std::string string);
+void updateCategory(std::vector<std::string>& items, std::string& items_str);

@@ -19,8 +19,8 @@
 static void glfw_error_callback(int error, const char* description);
 void showMainWindow(bool* pOpen);
 std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items);
-void showAddWordWindow(bool* pOpen);
-void showAddCategoryWindow(bool* pOpen);
+std::shared_ptr<Messenger> showAddWordWindow(bool* pOpen, std::string& items);
+std::shared_ptr<Messenger> showAddCategoryWindow(bool* pOpen);
 void showPrintWordCategoryWindow(bool* pOpen);
 void showChangeDeleteWordWindow(bool* pOpen);
 void showChangeDeleteCategoryWindow(bool* pOpen);
@@ -137,8 +137,12 @@ void showMainWindow(bool* pOpen)
     if (find_word_window)
         MessengerHandler::get().addMessenger(showFindWordWindow(&find_word_window, items_str));
 
-    if (add_word_window) showAddWordWindow(&add_word_window);
-    if (add_category_window) showAddCategoryWindow(&add_category_window);
+    if (add_word_window)
+        MessengerHandler::get().addMessenger(showAddWordWindow(&add_word_window, items_str));
+
+    if (add_category_window)
+        MessengerHandler::get().addMessenger(showAddCategoryWindow(&add_category_window));
+
     if (print_word_category_window) showPrintWordCategoryWindow(&print_word_category_window);
     if (change_delete_word_window) showChangeDeleteWordWindow(&change_delete_word_window);
     if (change_delete_category_window) showChangeDeleteCategoryWindow(&change_delete_category_window);
@@ -150,18 +154,30 @@ void showMainWindow(bool* pOpen)
     {
         ImGui::Begin(programTitle, NULL, window_flag);
 
+        //Find word button
         if (UI::buttonAlign("Find word", 0.f))
         {
-            if (items.size() == WordManager::get().getCategorys()->size())
-                return;
-
-            items_str = "";
-            for (auto& c : *WordManager::get().getCategorys())
-                items_str += c.second->getCateName() + '\0';
+            updateCategory(items, items_str);
 
             find_word_window = true;
         }
 
+
+        //Add word button
+        if (UI::buttonAlign("Add word", 0.f))
+        {
+            updateCategory(items, items_str);
+
+            add_word_window = true;
+        }
+
+        //Add category button
+        if (UI::buttonAlign("Add category", 0.f))
+        {
+            add_category_window = true;
+        }
+
+        //Messenger Window
         if (MessengerHandler::get().hasMessenger())
             MessengerHandler::get().openMessengerWindow();
 
@@ -174,10 +190,6 @@ void showMainWindow(bool* pOpen)
 
 std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items)
 {
-    ImGuiIO& io = ImGui::GetIO();
-    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.4, ImGui::GetIO().DisplaySize.y * 0.4));
-    //ImGui::SetNextWindowSize(ImVec2(450.f, 200.f));
-
     static int cateID = -1;
     std::shared_ptr<Messenger> mess = nullptr;
 
@@ -207,14 +219,78 @@ std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items)
     return mess;
 }
 
-void showAddWordWindow(bool* pOpen)
+std::shared_ptr<Messenger> showAddWordWindow(bool* pOpen, std::string& items)
 {
+    static int cateID = -1;
+    std::shared_ptr<Messenger> mess = nullptr;
 
+    //window 
+    ImGui::Begin("Add word", pOpen);
+    ImGui::Combo("Category", &cateID, items.c_str());
+
+    static char buf[20] = "Enter word to add";
+    ImGui::InputText("###", buf, IM_ARRAYSIZE(buf));
+
+    if (UI::buttonAlign("Add", 0.5f))
+    {
+        std::shared_ptr<Word> pWord = nullptr;
+
+        if (WordManager::get().existCategory(cateID) &&
+            strcmp(buf, "") != 0 &&
+            strcmp(buf, "Enter word to add") != 0)
+        {
+            pWord = createWord(cateID, buf, "");
+            WordManager::get().addWord(pWord);
+            saveWord(pWord);
+        }
+
+        if (pWord == nullptr)
+            mess = std::make_shared<Messenger>(Messenger("Can't find word"));
+        else
+            mess = std::make_shared<Messenger>(Messenger("Add " + pWord->getWord() + " success"));
+
+        strcpy(buf, "Enter word to add");
+        cateID = -1;
+    }
+
+    ImGui::End();
+
+    return mess;
 }
 
-void showAddCategoryWindow(bool* pOpen)
+std::shared_ptr<Messenger> showAddCategoryWindow(bool* pOpen)
 {
+    std::shared_ptr<Messenger> mess = nullptr;
 
+    ImGui::Begin("Add category", pOpen);
+
+    static char buf[30] = "Enter category to add";
+    ImGui::InputText("###", buf, IM_ARRAYSIZE(buf));
+
+    if (UI::buttonAlign("Add", 0.f))
+    {
+        std::shared_ptr<Category> pCate = nullptr;
+
+        if (!WordManager::get().existCategory(buf) &&
+            strcmp(buf, "") != 0 &&
+            strcmp(buf, "Enter category to add") != 0)
+        {
+            pCate = createCategory(WordManager::get().getCategorys()->size(), buf);
+            WordManager::get().addCategory(pCate);
+            saveCategory(pCate);
+        }
+
+        if (pCate == nullptr)
+            mess = std::make_shared<Messenger>(Messenger("Can't find category"));
+        else
+            mess = std::make_shared<Messenger>(Messenger("Add " + pCate->getCateName() + " success"));
+
+        strcpy(buf, "Enter category to add");
+    }
+
+    ImGui::End();
+
+    return mess;
 }
 
 void showPrintWordCategoryWindow(bool* pOpen)
@@ -231,6 +307,3 @@ void showChangeDeleteCategoryWindow(bool* pOpen)
 {
 
 }
-
-
-

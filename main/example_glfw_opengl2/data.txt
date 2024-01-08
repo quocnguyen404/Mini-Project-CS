@@ -16,3 +16,6 @@ Bac Kinh;NDT;1349.59 trieu nguoi
 Campuchia
 0
 Phnom Penh;KHR;1687.000;181,040 km2
+BMW
+4
+

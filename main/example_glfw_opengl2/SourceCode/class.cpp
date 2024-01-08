@@ -22,9 +22,8 @@ std::string& Category::getCateName() { return this->categoryName; }
 
 std::shared_ptr<Word> Category::getWord(std::string word)
 {
-
     for (int i = 0; i < this->words.size(); i++)
-        if (word == words[i]->getWord())
+        if (strcmp(word.c_str(), words[i]->getWord().c_str()) == 0)
             return this->words[i];
 
     return nullptr;
@@ -37,7 +36,7 @@ std::vector<std::string>* Word::getRelateWord()
 
 void Category::addWord(std::shared_ptr<Word>& word)
 {
-    this->words.push_back(word);
+    this->words.emplace_back(word);
 }
 
 void Category::removeWord(std::string word)
@@ -75,16 +74,26 @@ std::string& WordManager::getCateName(int cateID)
 bool WordManager::existCategory(int cateID)
 {
     for (auto& cate : this->categorys)
-    {
         if (cate.second->getCatID() == cateID)
             return true;
-    }
+
+    return false;
+}
+
+bool WordManager::existCategory(std::string cateName)
+{
+    for (auto& cate : this->categorys)
+        if (strcmp(cate.second->getCateName().c_str(), cateName.c_str()) == 0)
+            return true;
 
     return false;
 }
 
 void WordManager::addCategory(std::shared_ptr<Category>& nCate)
 {
+    if (nCate == nullptr)
+        return;
+
     std::cout << "add category " << nCate->getCatID() << ", " << nCate->getCateName() << "\n";
     categorys.emplace(nCate->getCatID(), nCate);
     return;
@@ -172,7 +181,7 @@ MessengerHandler& MessengerHandler::get() { return instance; }
 
 bool MessengerHandler::hasMessenger() { return messengers.size() > 0 ? true : false; }
 
-void MessengerHandler::addMessenger(std::shared_ptr<Messenger> messenger)
+void MessengerHandler::addMessenger(std::shared_ptr<Messenger>& messenger)
 {
     if (messenger == nullptr)
         return;
