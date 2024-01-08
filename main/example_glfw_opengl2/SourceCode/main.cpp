@@ -24,7 +24,6 @@ void showAddCategoryWindow(bool* pOpen);
 void showPrintWordCategoryWindow(bool* pOpen);
 void showChangeDeleteWordWindow(bool* pOpen);
 void showChangeDeleteCategoryWindow(bool* pOpen);
-void showOutputWindow(bool* pOpen);
 
 char programTitle[] = "BKEncyclopedia";
 
@@ -80,15 +79,9 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        float oldSize = ImGui::GetFont()->Scale;
-        ImGui::GetFont()->Scale = 1.5f;
-        ImGui::PushFont(ImGui::GetFont());
-        ImGui::GetFont()->Scale = oldSize;
         //Our code
-        if (show_main_window) showMainWindow(&show_main_window);
-
-        ImGui::PopFont();
-        //font
+        if (show_main_window)
+            showMainWindow(&show_main_window);
 
 
         // Rendering
@@ -131,14 +124,15 @@ void showMainWindow(bool* pOpen)
     static bool print_word_category_window = false;
     static bool change_delete_word_window = false;
     static bool change_delete_category_window = false;
-    static bool output_window = false;
 
     //category item
     static std::string items_str;
     std::vector<std::string> items;
 
     //font
-
+    float oldSize = ImGui::GetFont()->Scale;
+    ImGui::GetFont()->Scale = 1.5f;
+    ImGui::PushFont(ImGui::GetFont());
 
     if (find_word_window)
         MessengerHandler::get().addMessenger(showFindWordWindow(&find_word_window, items_str));
@@ -148,41 +142,41 @@ void showMainWindow(bool* pOpen)
     if (print_word_category_window) showPrintWordCategoryWindow(&print_word_category_window);
     if (change_delete_word_window) showChangeDeleteWordWindow(&change_delete_word_window);
     if (change_delete_category_window) showChangeDeleteCategoryWindow(&change_delete_category_window);
-    if (output_window) showOutputWindow(&output_window);
 
     ImGuiWindowFlags window_flag = 0;
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f));
+    //ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f));
 
-    ImGui::Begin(programTitle, NULL, window_flag);
-
-
-    ImGui::Text("Hello");
-
-    if (UI::buttonAlign("Find word", 0.1f))
     {
-        if (items.size() == WordManager::get().getCategorys()->size())
-            return;
+        ImGui::Begin(programTitle, NULL, window_flag);
 
-        items_str = "";
-        for (auto& c : *WordManager::get().getCategorys())
-            items_str += c.second->getCateName() + '\0';
+        if (UI::buttonAlign("Find word", 0.f))
+        {
+            if (items.size() == WordManager::get().getCategorys()->size())
+                return;
 
-        find_word_window = true;
+            items_str = "";
+            for (auto& c : *WordManager::get().getCategorys())
+                items_str += c.second->getCateName() + '\0';
+
+            find_word_window = true;
+        }
+
+        if (MessengerHandler::get().hasMessenger())
+            MessengerHandler::get().openMessengerWindow();
+
+        ImGui::GetFont()->Scale = oldSize;
+        ImGui::PopFont();
+
+        ImGui::End();
     }
-
-    ImGui::End();
-
-    if (MessengerHandler::get().hasMessenger())
-        MessengerHandler::get().printMessenger();
-
 }
 
 std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items)
 {
     ImGuiIO& io = ImGui::GetIO();
-    ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f), ImGuiCond_None, ImVec2(0.5f, 0.5f));
-    ImGui::SetNextWindowSize(ImVec2(450.f, 200.f));
+    ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 0.4, ImGui::GetIO().DisplaySize.y * 0.4));
+    //ImGui::SetNextWindowSize(ImVec2(450.f, 200.f));
 
     static int cateID = -1;
     std::shared_ptr<Messenger> mess = nullptr;
@@ -191,37 +185,21 @@ std::shared_ptr<Messenger> showFindWordWindow(bool* pOpen, std::string& items)
     ImGui::Begin("Find word", pOpen);
     ImGui::Combo("Category", &cateID, items.c_str());
 
-    char buf[100] = "Enter word";
+    static char buf[20] = "Enter word";
     ImGui::InputText("###", buf, IM_ARRAYSIZE(buf));
-
-
-    if (ImGui::IsKeyDown(ImGuiKey_Enter))
-    {
-        if (!WordManager::get().existCategory(cateID))
-            return nullptr;
-
-        std::shared_ptr<Word> pWord = WordManager::get().getWord(cateID, buf);
-
-        if (pWord == nullptr)
-            return nullptr;
-
-        mess = std::make_shared<Messenger>(Messenger(pWord));
-
-        ImGui::End();
-
-        return mess;
-    }
 
     if (UI::buttonAlign("Find", 0.5f))
     {
-        if (!WordManager::get().existCategory(cateID))
-            return nullptr;
+        std::shared_ptr<Word> pWord = nullptr;
+        pWord = WordManager::get().getWord(cateID, buf);
 
-        mess = std::make_shared<Messenger>(Messenger(WordManager::get().getWord(cateID, buf)));
+        if (pWord == nullptr)
+            mess = std::make_shared<Messenger>(Messenger("Can't find word"));
+        else
+            mess = std::make_shared<Messenger>(Messenger(pWord));
 
-        ImGui::End();
-
-        return mess;
+        strcpy(buf, "Enter word");
+        cateID = -1;
     }
 
     ImGui::End();
@@ -250,11 +228,6 @@ void showChangeDeleteWordWindow(bool* pOpen)
 }
 
 void showChangeDeleteCategoryWindow(bool* pOpen)
-{
-
-}
-
-void showOutputWindow(bool* pOpen)
 {
 
 }

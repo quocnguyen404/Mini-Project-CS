@@ -18,13 +18,14 @@ Category::Category(int categoryID, std::string categoryName)
 
 int Category::getCatID() { return this->categoryID; }
 
-std::string Category::getCateName() { return this->categoryName; }
+std::string& Category::getCateName() { return this->categoryName; }
 
 std::shared_ptr<Word> Category::getWord(std::string word)
 {
-    for (auto& w : this->words)
-        if (strcmp(word.c_str(), w->getWord().c_str()) != 0)
-            return w;
+
+    for (int i = 0; i < this->words.size(); i++)
+        if (word == words[i]->getWord())
+            return this->words[i];
 
     return nullptr;
 }
@@ -60,7 +61,15 @@ WordManager& WordManager::get() { return instance; }
 
 std::shared_ptr<Word> WordManager::getWord(int cateID, std::string word)
 {
+    if (!this->existCategory(cateID))
+        return nullptr;
+
     return categorys[cateID]->getWord(word);
+}
+
+std::string& WordManager::getCateName(int cateID)
+{
+    return this->categorys[cateID]->getCateName();
 }
 
 bool WordManager::existCategory(int cateID)
@@ -113,6 +122,11 @@ std::map <int, std::shared_ptr<Category>>* WordManager::getCategorys()
 // Messenger class //
 /////////////////////
 
+Messenger::Messenger(char* messenger)
+{
+    this->addMessenger(messenger);
+}
+
 Messenger::Messenger(std::string& messenger)
 {
     this->addMessenger("Messenger: ");
@@ -121,11 +135,12 @@ Messenger::Messenger(std::string& messenger)
 
 Messenger::Messenger(std::shared_ptr<Word>& word)
 {
-    this->addMessenger("Word: ");
-    this->addMessenger(word->getWord());
-    this->addMessenger(std::to_string(word->getCateID()));
+    this->addMessenger("Word: " + word->getWord());
+    this->addMessenger("Category ID: " + std::to_string(word->getCateID()));
+    this->addMessenger("Category name: " + WordManager::get().getCateName(word->getCateID()));
 
-    for (auto& w : *word->getRelateWord())
+    this->addMessenger("Relate word: ");
+    for (std::string& w : *word->getRelateWord())
         this->addMessenger(w);
 }
 
@@ -165,7 +180,7 @@ void MessengerHandler::addMessenger(std::shared_ptr<Messenger> messenger)
     messengers.emplace_back(messenger);
 }
 
-void MessengerHandler::printMessenger()
+void MessengerHandler::openMessengerWindow()
 {
     ImGui::Begin("Messenger");
 
@@ -173,8 +188,14 @@ void MessengerHandler::printMessenger()
         for (auto& s : m->getMessenger())
             ImGui::Text(s.c_str());
 
-    ImGui::End();
+    if (UI::buttonAlign("Close/Clear", 0.f))
+        this->closeMessengerWindow();
 
+    ImGui::End();
+}
+
+void MessengerHandler::closeMessengerWindow()
+{
     for (auto& m : this->messengers)
         m.reset();
 

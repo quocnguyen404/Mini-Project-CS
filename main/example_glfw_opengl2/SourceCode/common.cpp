@@ -60,6 +60,7 @@ void loadData()
 std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRelate)
 {
     std::shared_ptr<Word> nWord(nullptr);
+
     nWord = std::make_shared<Word>(cateID, word);
 
     std::cout << "create word " << cateID << ", " << word << "\n";
@@ -79,7 +80,32 @@ void createCategory(int cateID, std::string cateName)
     WordManager::get().addCategory(nCate);
 
     std::cout << "create category " << cateID << ", " << cateName << "\n";
+}
 
+std::string removeExtraWhiteSpace(std::string str)
+{
+    std::string nstr;
+    for (int i = 0; i < str.length(); )
+    {
+        if (str[i] == ' ')
+        {
+            if (i == 0 || i == str.length() - 1)
+            {
+                i++;
+                continue;
+            }
+
+            while (str[i + 1] == ' ')
+                i++;
+        }
+        nstr += str[i++];
+    }
+
+
+    if (nstr[nstr.length() - 1] == ' ')
+        nstr[nstr.length() - 1] = '\0';
+
+    return nstr;
 }
 
 
