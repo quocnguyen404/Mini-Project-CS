@@ -14,11 +14,18 @@ std::string Word::getWord() { return this->word; }
 // Category class definition //
 ///////////////////////////////
 Category::Category(int categoryID, std::string categoryName)
-    : categoryID(categoryID), categoryName(categoryName) {}
+    : categoryID(categoryID), categoryName(categoryName), words()  {}
 
 int Category::getCatID() { return this->categoryID; }
 
+
 std::string& Category::getCateName() { return this->categoryName; }
+
+std::vector<std::shared_ptr<Word>> Category::getWords()
+{
+    return this->words;
+}
+
 
 std::shared_ptr<Word> Category::getWord(std::string word)
 {
@@ -89,7 +96,7 @@ bool WordManager::existCategory(std::string cateName)
     return false;
 }
 
-void WordManager::addCategory(std::shared_ptr<Category>& nCate)
+void WordManager::addCategory(std::shared_ptr<Category> nCate)
 {
     if (nCate == nullptr)
         return;
@@ -99,7 +106,7 @@ void WordManager::addCategory(std::shared_ptr<Category>& nCate)
     return;
 }
 
-void WordManager::addWord(std::shared_ptr<Word>& nWord)
+void WordManager::addWord(std::shared_ptr<Word> nWord)
 {
     if (!existCategory(nWord->getCateID()))
     {
@@ -109,6 +116,14 @@ void WordManager::addWord(std::shared_ptr<Word>& nWord)
 
     this->categorys[nWord->getCateID()]->addWord(nWord);
 }
+
+void WordManager::removeWord(int cateID, std::shared_ptr<Word> word)
+{
+    this->categorys[cateID]->removeWord(word->getWord());
+
+
+}
+
 
 void WordManager::removeCategory(int cateID)
 {
@@ -122,6 +137,12 @@ void WordManager::removeCategory(int cateID)
     categorys.erase(cateID);
 }
 
+std::shared_ptr<Category>& WordManager::getCategory(int cateID)
+{
+    return this->categorys[cateID];
+}
+
+
 std::map <int, std::shared_ptr<Category>>* WordManager::getCategorys()
 {
     return &this->categorys;
@@ -132,17 +153,19 @@ std::map <int, std::shared_ptr<Category>>* WordManager::getCategorys()
 /////////////////////
 
 Messenger::Messenger(char* messenger)
+    : messenger()
 {
     this->addMessenger(messenger);
 }
 
 Messenger::Messenger(std::string& messenger)
+    : messenger()
 {
-    this->addMessenger("Messenger: ");
-    this->addMessenger(messenger);
+    this->addMessenger("Messenger: " + messenger);
 }
 
 Messenger::Messenger(std::shared_ptr<Word>& word)
+    : messenger()
 {
     this->addMessenger("Word: " + word->getWord());
     this->addMessenger("Category ID: " + std::to_string(word->getCateID()));
@@ -154,6 +177,7 @@ Messenger::Messenger(std::shared_ptr<Word>& word)
 }
 
 Messenger::Messenger(std::shared_ptr<Category>& category)
+    : messenger()
 {
     this->addMessenger("Category: ");
     this->addMessenger(category->getCateName());
@@ -165,7 +189,7 @@ void Messenger::addMessenger(std::string additionMessenger)
     this->messenger.push_back(additionMessenger);
 }
 
-std::vector<std::string>& Messenger::getMessenger()
+std::vector<std::string> Messenger::getMessenger()
 {
     return this->messenger;
 }
@@ -188,6 +212,14 @@ void MessengerHandler::addMessenger(std::shared_ptr<Messenger>& messenger)
 
     messengers.emplace_back(messenger);
 }
+
+//void MessengerHandler::addMessenger(Messenger& messenger)
+//{
+//    if (messenger.getMessenger().size() == 0)
+//        return;
+//
+//    messengers.emplace_back(messenger);
+//}
 
 void MessengerHandler::openMessengerWindow()
 {

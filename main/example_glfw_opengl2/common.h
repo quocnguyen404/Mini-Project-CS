@@ -44,6 +44,7 @@ public:
     Category(int categoryID, std::string categoryName);
     int getCatID();
     std::string& getCateName();
+    std::vector<std::shared_ptr<Word>> getWords();
     std::shared_ptr<Word> getWord(std::string word);
     void addWord(std::shared_ptr<Word>& word);
     void removeWord(std::string word);
@@ -64,9 +65,11 @@ public:
     std::string& getCateName(int cateID);
     bool existCategory(int cateID);
     bool existCategory(std::string cateName);
-    void addCategory(std::shared_ptr<Category>& ntype);
-    void addWord(std::shared_ptr<Word>& nWord);
+    void addCategory(std::shared_ptr<Category> nCate);
+    void addWord(std::shared_ptr<Word> nWord);
+    void removeWord(int cateID, std::shared_ptr<Word> word);
     void removeCategory(int categoryID);
+    std::shared_ptr<Category>& getCategory(int cateID);
     std::map <int, std::shared_ptr<Category>>* getCategorys();
 };
 
@@ -84,7 +87,7 @@ public:
     Messenger(std::shared_ptr<Word>& word);
     Messenger(std::shared_ptr<Category>& category);
     void addMessenger(std::string additionMessenger);
-    std::vector<std::string>& getMessenger();
+    std::vector<std::string> getMessenger();
 };
 
 
@@ -99,6 +102,7 @@ public:
     static MessengerHandler& get();
     bool hasMessenger();
     void addMessenger(std::shared_ptr<Messenger>& messenger);
+    //void addMessenger(Messenger& messenger);
     void openMessengerWindow();
     void closeMessengerWindow();
 };
@@ -107,7 +111,13 @@ void loadCategory();
 void loadData();
 void saveWord(std::shared_ptr<Word> pWord);
 void saveCategory(std::shared_ptr<Category>& pCate);
+void removeWord(std::shared_ptr<Word> pWord);
 std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRelate);
 std::shared_ptr<Category> createCategory(int cateID, std::string cateName);
+std::shared_ptr<Messenger> createMessenger(char* messenger);
+std::shared_ptr<Messenger> createMessenger(std::string& messenger);
+std::shared_ptr<Messenger> createMessenger(std::shared_ptr<Word>& word);
+std::shared_ptr<Messenger> createMessenger(std::shared_ptr<Category>& category);
 std::string removeExtraWhiteSpace(std::string string);
 void updateCategory(std::vector<std::string>& items, std::string& items_str);
+void updateWord(std::vector<std::string>& words, std::string& items_str, int cateID);

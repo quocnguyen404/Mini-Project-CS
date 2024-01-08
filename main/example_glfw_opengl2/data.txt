@@ -18,4 +18,3 @@ Campuchia
 Phnom Penh;KHR;1687.000;181,040 km2
 BMW
 4
-

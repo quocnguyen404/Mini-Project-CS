@@ -99,6 +99,35 @@ void saveCategory(std::shared_ptr<Category>& pCate)
     std::cout << "Save word: " << pCate->getCateName() << " successful" << "\n";
 }
 
+void removeWord(std::shared_ptr<Word> pWord)
+{
+    std::fstream file;
+
+    file.open(DATA_FILE, std::ios::in | std::ios::out);
+
+    if (!file)
+    {
+        std::cout << "open file fail, can't delete " << pWord->getWord() << "\n";
+        return;
+    }
+
+    std::string cateID;
+    std::string word;
+    std::string rawRelate;
+
+    while (std::getline(file, word))
+    {
+        if (strcmp(word.c_str(), pWord->getWord().c_str()) == 0)
+        {
+
+        }
+
+        std::getline(file, cateID);
+        std::getline(file, rawRelate);
+    }
+}
+
+
 std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRelate)
 {
     std::shared_ptr<Word> nWord(nullptr);
@@ -123,6 +152,40 @@ std::shared_ptr<Category> createCategory(int cateID, std::string cateName)
     std::cout << "create category " << cateID << ", " << cateName << "\n";
 
     return nCate;
+}
+
+std::shared_ptr<Messenger> createMessenger(char* messenger)
+{
+    return std::make_shared<Messenger>(messenger);
+}
+
+std::shared_ptr<Messenger> createMessenger(std::string& messenger)
+{
+    return std::make_shared<Messenger>(messenger);
+}
+
+std::shared_ptr<Messenger> createMessenger(std::shared_ptr<Word>& word)
+{
+    if (word == nullptr)
+        return nullptr;
+
+    std::shared_ptr<Messenger> pMess(nullptr);
+
+    pMess = std::make_shared<Messenger>(word);
+
+    return pMess;
+}
+
+std::shared_ptr<Messenger> createMessenger(std::shared_ptr<Category>& category)
+{
+    if (category == nullptr)
+        return nullptr;
+
+    std::shared_ptr<Messenger> pMess(nullptr);
+
+    pMess = std::make_shared<Messenger>(category);
+
+    return pMess;
 }
 
 std::string removeExtraWhiteSpace(std::string str)
@@ -159,6 +222,17 @@ void updateCategory(std::vector<std::string>& items, std::string& items_str)
     items_str = "";
     for (auto& c : *WordManager::get().getCategorys())
         items_str += c.second->getCateName() + '\0';
+}
+
+void updateWord(std::vector<std::string>& words, std::string& items_str, int cateID)
+{
+    if (words.size() == WordManager::get().getCategory(cateID)->getWords().size())
+        return;
+
+    items_str = "";
+
+    for (auto& c : WordManager::get().getCategory(cateID)->getWords())
+        items_str += c->getWord() + '\0';
 }
 
 
