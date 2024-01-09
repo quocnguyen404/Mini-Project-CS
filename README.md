@@ -11,6 +11,9 @@ Using Dear ImGUI framework create BKEncyclopedia.
 
 - Header file in
     Mini-Project-CS\main\example_glfw_opengl2\Header
+  
+- App in
+    Mini-Project-CS\main\example_glfw_opengl2\Release\BKEncyclopedia.exe
 
 Reference:
     Dear ImGUI: https://github.com/ocornut/imgui.git
