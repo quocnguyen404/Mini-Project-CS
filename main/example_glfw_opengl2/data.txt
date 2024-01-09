@@ -18,10 +18,10 @@ Campuchia
 Phnom Penh;KHR;1687.000;181,040 km2
 Dog
 4
-Bone;Cat;Pet;
+Bone;Pet;
 Cat
-j
+4
 Dog;Pet;
 Snake
 4
-Scary;NoLeg;
+Scary;No leg;

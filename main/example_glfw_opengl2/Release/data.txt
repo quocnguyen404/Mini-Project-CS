@@ -1,0 +1,27 @@
+Han Quoc
+1
+Seoul;won;50760000;99,392 km2
+Thai Lan
+1
+Bangkok;Bath;67450000;514 km2
+Singapore
+1
+Singapore;SGD;5560302;697 km2
+Lao
+1
+Vientiane;Kip;6700000;2368000km2
+Trung Quoc
+1
+Bac Kinh;NDT;1349.59 trieu nguoi
+Campuchia
+1
+Phnom Penh;KHR;1687.000;181,040 km2
+Dog
+4
+Bone;Pet;
+Cat
+4
+Dog;Pet;
+Snake
+4
+Scary;No leg;

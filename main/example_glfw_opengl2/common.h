@@ -1,9 +1,6 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include <iostream>
-#include <string>
 #include <fstream>
-#include <vector>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -13,8 +10,6 @@
 
 #define IM_ARRAYSIZE(_ARR)          ((int)(sizeof(_ARR) / sizeof(*(_ARR))))     // Size of a static C-style array. Don't use on pointers!
 
-
-const int NUM_WORD_LINE = 3;
 const std::string DATA_FILE = "data.txt";
 const std::string CATEGORY_FILE = "category.txt";
 
@@ -48,7 +43,7 @@ public:
     Category(int categoryID, std::string categoryName);
     int getCatID();
     std::string& getCateName();
-    void setCateName(std::string nCateName);
+    void setCateName(std::string nCateName);    
     std::vector<std::shared_ptr<Word>> getWords();
     std::shared_ptr<Word> getWord(std::string word);
     void addWord(std::shared_ptr<Word>& word);
@@ -82,7 +77,6 @@ public:
     std::map <int, std::shared_ptr<Category>>* getCategorys();
 };
 
-//Singleton
 //Do not pass nullptr to this class constructor
 //Messenger class
 class Messenger
@@ -99,7 +93,7 @@ public:
     std::vector<std::string> getMessenger();
 };
 
-
+//Singleton
 //Messenger Handler class
 class MessengerHandler
 {

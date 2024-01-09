@@ -116,8 +116,6 @@ static void glfw_error_callback(int error, const char* description)
 
 void showMainWindow(bool* pOpen)
 {
-    ImGuiIO& io = ImGui::GetIO();
-
     static bool find_word_window = false;
     static bool add_word_window = false;
     static bool add_category_window = false;
@@ -186,8 +184,6 @@ void showMainWindow(bool* pOpen)
 
     if (change_delete_category_window)
         showChangeDeleteCategoryWindow(&change_delete_category_window, items_cate, items_str);
-
-        
 
     ImGui::GetFont()->Scale = oldSize;
     ImGui::PopFont();
@@ -420,6 +416,7 @@ void showChangeDeleteCategoryWindow(bool* pOpen, std::vector<std::shared_ptr<Cat
 
             cateID = -1;
             strcpy(buf, "Enter new category");
+            updateWordsToFile();
             //updateCategoryItems(items_cate, items);
         }
     }

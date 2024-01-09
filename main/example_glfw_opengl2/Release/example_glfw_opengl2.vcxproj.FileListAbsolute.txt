@@ -1,0 +1,1 @@
+C:\projects\Cpp\Mini-Project-CS\main\example_glfw_opengl2\Release\BKEncyclopedia.exe

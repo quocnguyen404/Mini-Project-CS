@@ -1,0 +1,5 @@
+1 Country
+2 Company
+3 Subject
+4 Animal
+5 Car
