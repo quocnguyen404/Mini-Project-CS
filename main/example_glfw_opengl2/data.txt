@@ -1,20 +1,27 @@
 Han Quoc
-0
+1
 Seoul;won;50760000;99,392 km2
 Thai Lan
-0
+1
 Bangkok;Bath;67450000;514 km2
 Singapore
-0
+1
 Singapore;SGD;5560302;697 km2
 Lao
-0
+1
 Vientiane;Kip;6700000;2368000km2
 Trung Quoc
-0
+1
 Bac Kinh;NDT;1349.59 trieu nguoi
 Campuchia
-0
+1
 Phnom Penh;KHR;1687.000;181,040 km2
-BMW
+Dog
 4
+Bone;Cat;Pet;
+Cat
+j
+Dog;Pet;
+Snake
+4
+Scary;NoLeg;

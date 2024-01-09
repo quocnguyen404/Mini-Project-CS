@@ -10,6 +10,18 @@ int Word::getCateID() { return this->categoryID; }
 
 std::string Word::getWord() { return this->word; }
 
+void Word::setWord(std::string nWord) { this->word = nWord; }
+
+void Word::addRelateWord(std::string relateWord)
+{
+    this->relate.push_back(relateWord);
+}
+
+void Word::removeRelateWord(std::string relateWord)
+{
+    this->relate.erase(find(this->relate.begin(), this->relate.end(), relateWord));
+}
+
 ///////////////////////////////
 // Category class definition //
 ///////////////////////////////
@@ -24,6 +36,11 @@ std::string& Category::getCateName() { return this->categoryName; }
 std::vector<std::shared_ptr<Word>> Category::getWords()
 {
     return this->words;
+}
+
+void Category::setCateName(std::string ncateName)
+{
+    this->categoryName = ncateName;
 }
 
 
@@ -53,7 +70,7 @@ void Category::removeWord(std::string word)
     if (w == nullptr)
         return;
 
-    this->words.erase(find(this->words.begin(), this->words.end(), w), this->words.end());
+    this->words.erase(find(this->words.begin(), this->words.end(), w));
     w.reset();
 }
 
@@ -73,9 +90,19 @@ std::shared_ptr<Word> WordManager::getWord(int cateID, std::string word)
     return categorys[cateID]->getWord(word);
 }
 
+
 std::string& WordManager::getCateName(int cateID)
 {
     return this->categorys[cateID]->getCateName();
+}
+
+int WordManager::getLargestCateID()
+{
+    int max = 0;
+    for (auto& cate : this->categorys)
+        max = max < cate.second->getCatID() ? cate.second->getCatID() : max;
+
+    return max;
 }
 
 bool WordManager::existCategory(int cateID)
@@ -95,6 +122,21 @@ bool WordManager::existCategory(std::string cateName)
 
     return false;
 }
+
+//update word in program not in file
+void WordManager::updateWord(int cateID, std::string oldWord, std::string nWord)
+{
+    auto pWord = this->getWord(cateID, oldWord);
+    pWord->setWord(nWord);
+}
+
+void WordManager::updateCategory(int cateID, std::string nCateName)
+{
+    auto pCate = this->categorys[cateID];
+
+    pCate->setCateName(nCateName);
+}
+
 
 void WordManager::addCategory(std::shared_ptr<Category> nCate)
 {
@@ -120,26 +162,31 @@ void WordManager::addWord(std::shared_ptr<Word> nWord)
 void WordManager::removeWord(int cateID, std::shared_ptr<Word> word)
 {
     this->categorys[cateID]->removeWord(word->getWord());
-
-
 }
 
 
 void WordManager::removeCategory(int cateID)
 {
-    if (categorys.find(cateID) == categorys.end())
+    if (this->categorys.find(cateID) == categorys.end())
     {
         std::string mes = "Not exist category.\n";
         return;
     }
 
-    categorys[cateID].reset();
-    categorys.erase(cateID);
+    this->categorys[cateID].reset();
+    this->categorys.erase(cateID);
 }
 
 std::shared_ptr<Category>& WordManager::getCategory(int cateID)
 {
     return this->categorys[cateID];
+}
+
+std::shared_ptr<Category>& WordManager::getCategory(std::string cateName)
+{
+    for (auto& c : this->categorys)
+        if (strcmp(c.second->getCateName().c_str(), cateName.c_str()) == 0)
+            return c.second;
 }
 
 
@@ -171,9 +218,11 @@ Messenger::Messenger(std::shared_ptr<Word>& word)
     this->addMessenger("Category ID: " + std::to_string(word->getCateID()));
     this->addMessenger("Category name: " + WordManager::get().getCateName(word->getCateID()));
 
-    this->addMessenger("Relate word: ");
+    std::string str = "Relate word: ";
     for (std::string& w : *word->getRelateWord())
-        this->addMessenger(w);
+        str += w + ", ";
+
+    this->addMessenger(str);
 }
 
 Messenger::Messenger(std::shared_ptr<Category>& category)

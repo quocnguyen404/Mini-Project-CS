@@ -49,6 +49,19 @@ void loadData()
         std::getline(file, cateID);
         std::getline(file, rawRelate);
 
+
+        try
+        {
+            if (!stoi(cateID))
+                throw 1;
+        }
+        catch (...)
+        {
+            MessengerHandler::get().addMessenger(createMessenger("Can't get category ID of word: " + word));
+            MessengerHandler::get().addMessenger(createMessenger("Cast category of " + word + " to " + WordManager::get().getCateName(1)));
+            cateID = "1";
+        }
+
         WordManager::get().addWord(createWord(stoi(cateID), word, rawRelate));
     }
 
@@ -71,8 +84,11 @@ void saveWord(std::shared_ptr<Word> pWord)
     file << pWord->getWord() << "\n";
     file << pWord->getCateID() << "\n";
 
-    for (std::string& s : *pWord->getRelateWord())
-        file << s;
+    if (pWord->getRelateWord()->size() == 0)
+        file << "";
+    else
+        for (std::string& s : *pWord->getRelateWord())
+            file << s + ";";
 
     file << "\n";
 
@@ -96,47 +112,44 @@ void saveCategory(std::shared_ptr<Category>& pCate)
     file << pCate->getCateName() << "\n";
     file.close();
 
-    std::cout << "Save word: " << pCate->getCateName() << " successful" << "\n";
+    std::cout << "Save category: " << pCate->getCateName() << " successful" << "\n";
 }
 
-void removeWord(std::shared_ptr<Word> pWord)
+void updateWordsToFile()
 {
-    std::fstream file;
+    //clear all data
+    std::ofstream file;
+    file.open(DATA_FILE, std::ios::trunc);
+    file.close();
 
-    file.open(DATA_FILE, std::ios::in | std::ios::out);
-
-    if (!file)
+    for (auto& cate : *WordManager::get().getCategorys())
     {
-        std::cout << "open file fail, can't delete " << pWord->getWord() << "\n";
-        return;
-    }
-
-    std::string cateID;
-    std::string word;
-    std::string rawRelate;
-
-    while (std::getline(file, word))
-    {
-        if (strcmp(word.c_str(), pWord->getWord().c_str()) == 0)
-        {
-
-        }
-
-        std::getline(file, cateID);
-        std::getline(file, rawRelate);
+        for (auto& w : cate.second->getWords())
+            saveWord(w);
     }
 }
 
+void updateCategoryToFile()
+{
+    //clear all data
+    std::ofstream file;
+    file.open(CATEGORY_FILE, std::ios::trunc);
+    file.close();
+
+    for (auto& c : *WordManager::get().getCategorys())
+        saveCategory(c.second);
+}
 
 std::shared_ptr<Word> createWord(int cateID, std::string word, std::string rawRelate)
 {
     std::shared_ptr<Word> nWord(nullptr);
 
     nWord = std::make_shared<Word>(cateID, word);
-
+    rawRelateHandle(nWord, rawRelate);
     std::cout << "create word " << cateID << ", " << word << "\n";
     return nWord;
 }
+
 
 std::shared_ptr<Category> createCategory(int cateID, std::string cateName)
 {
@@ -188,6 +201,16 @@ std::shared_ptr<Messenger> createMessenger(std::shared_ptr<Category>& category)
     return pMess;
 }
 
+void rawRelateHandle(std::shared_ptr<Word> pWord, std::string rawRelate)
+{
+    std::stringstream ss(rawRelate);
+    std::string segment;
+
+    while (std::getline(ss, segment, ';'))
+        pWord->addRelateWord(segment);
+}
+
+
 std::string removeExtraWhiteSpace(std::string str)
 {
     std::string nstr;
@@ -214,25 +237,22 @@ std::string removeExtraWhiteSpace(std::string str)
     return nstr;
 }
 
-void updateCategory(std::vector<std::string>& items, std::string& items_str)
+void updateCategoryItems(std::vector<std::shared_ptr<Category>>& categorys, std::string& items_str)
 {
-    if (items.size() == WordManager::get().getCategorys()->size())
-        return;
-
-    items_str = "";
     for (auto& c : *WordManager::get().getCategorys())
+    {
         items_str += c.second->getCateName() + '\0';
+        categorys.emplace_back(c.second);
+    }
 }
 
-void updateWord(std::vector<std::string>& words, std::string& items_str, int cateID)
+void updateWordItems(std::vector<std::string>& words, std::string& items_str, int cateID)
 {
-    if (words.size() == WordManager::get().getCategory(cateID)->getWords().size())
-        return;
-
-    items_str = "";
-
     for (auto& c : WordManager::get().getCategory(cateID)->getWords())
+    {
         items_str += c->getWord() + '\0';
+        words.emplace_back(c->getWord());
+    }
 }
 
 
